@@ -1,0 +1,17 @@
+@media (max-width: 767px) {
+    div.menu {
+        display: block;
+        width: 65vw;
+        height: 100vh;
+        background-color: white;
+        left: -100%;
+        border-right: solid black 1px;
+        position: absolute;
+        overflow: hidden;
+        transition: left 0.5s ease;
+    }
+
+    div.menu.expanded {
+        left: 0%;
+    }
+}
