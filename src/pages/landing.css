@@ -1,0 +1,59 @@
+div.landing-container {
+    max-width: 1920px;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+div.hero-heading h1 {
+    width: 100%;
+    font-size: 4rem;
+    color: white;
+    font-family: Maven Pro;
+    line-height: 160%;
+    font-weight: bolder;
+}
+
+input[type="text"] {
+    border: #666666 solid 2px;
+    width: 80%;
+    padding: 0.5rem;
+}
+
+
+
+div.signup-form h1 {
+    color: #6750E0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+div.hero-heading h2 {
+    color: white;
+    width: 100%;
+    font-size: 3rem;
+    font-family: "Maven Pro", "arial";
+    line-height: 160%;
+    font-weight: normal;
+}
+
+@media (min-width: 768px) {
+    div.hero-heading h1 {
+        width: 80%;
+        font-size: 5rem;
+    }
+
+    div.hero-heading h2 {
+        width: 80%;
+        font-size: 2.75rem;
+    }
+
+    div.hero-heading {
+        flex: 0 0 70%;
+    }
+
+    div.signup-form {
+        background-color: white;
+        flex: 0 0 30%;
+        border-radius: 6px;
+    }
+}

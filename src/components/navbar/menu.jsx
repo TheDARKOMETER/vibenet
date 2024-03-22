@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import menu from './menu.css'
+import React from 'react'
+import './menu.css'
 
 export default function Menu(props) {
     return (
