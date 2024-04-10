@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import Navbar from '../components/navbar/navbar'
+import { Navbar, VisitorFooter } from '../components/index'
 
 
 export default function VisitorLayout() {
@@ -8,6 +8,7 @@ export default function VisitorLayout() {
         <>
             <Navbar />
             <Outlet />
+            <VisitorFooter />
         </>
     )
 }

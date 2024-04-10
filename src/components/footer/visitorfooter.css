@@ -1,0 +1,24 @@
+
+
+
+
+@media (min-width: 768px) {
+    
+    footer nav ul li::after {
+        content: '|';
+    }
+    
+
+    footer nav ul li::after {
+        margin-left: 0.2rem;
+    }
+
+    footer nav span {
+        margin-left: 0.2rem;
+    }
+    
+    footer nav ul {
+        gap: 0.5rem;
+    }
+    
+}

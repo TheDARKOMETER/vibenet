@@ -10,7 +10,7 @@ export default function Navbar() {
     }
 
     return (
-        <>
+        <header>
             <Menu state={isExpanded} />
             <div className='nav-bar center-margin ml-4 mr-4 pt-4 pb-4 flex  sm:place-content-between items-center justify-center'>
                 <span className='grow sm:hidden'></span>
@@ -22,6 +22,6 @@ export default function Navbar() {
                 <a href='#' className='white-link hidden sm:block'>Help</a></span>
 
             </div>
-        </>
+        </header>
     )
 }

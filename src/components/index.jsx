@@ -1,3 +1,2 @@
-import navbar from "./navbar/navbar";
-
-export default navbar
+export { default as Navbar } from "./navbar/navbar";
+export { VisitorFooter } from "./footer/VisitorFooter";

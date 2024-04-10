@@ -16,15 +16,15 @@ export default function Landing() {
         todayBtn: false,
         clearBtn: true,
         clearBtnText: "Clear",
-        maxDate: new Date("2030-01-01"),
+        maxDate: Date.now(), // Pretty weird idea, but the max date should but the current date of which the user is registering
         minDate: new Date("1950-01-01"),
         theme: {
-            background: "bg-gray-700 dark:bg-gray-800",
+            background: "bg-gray-100 dark:bg-gray-800",
             todayBtn: "",
             clearBtn: "",
             icons: "",
             text: "",
-            disabledText: "bg-red-500",
+            disabledText: "bg-gray-600",
             input: "",
             inputIcon: "",
             selected: "",
@@ -35,7 +35,7 @@ export default function Landing() {
             next: () => <span>Next</span>,
         },
         datepickerClassNames: "top-12",
-        defaultDate: new Date("2022-01-01"),
+        defaultDate: new Date(),
         language: "en",
         disabledDates: [],
         weekDays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
@@ -58,7 +58,7 @@ export default function Landing() {
     }
 
     return (
-        <div className='landing-container page-container flex mr-4 ml-4 center-margin'>
+        <div className='landing-container flex flex-col sm:flex-row mr-4 ml-4 center-margin'>
             <div className='hero-heading'>
                 <h1>
                     Connect, Vibe, and Discover: Your Social Media Journey Starts Here!
@@ -67,18 +67,35 @@ export default function Landing() {
                     Interact with millions of other users in Vibenet
                 </h2>
             </div>
-            <div className='signup-form flex flex-col justify-center items-center'>
-                <h1>Let’s get started!</h1>
-                <input className='landing-form' type='text' id='username' placeholder='Username' />
-                <input className='landing-form' type='text' id='password' placeholder='Password' />
-                <input className='landing-form' type='text' id='confpass' placeholder='Confirm Password' />
-                <input className='landing-form' type='text' id='email' placeholder='Email' />
-                <div className='date-picker-wrapper flex flex-row items-center w-80'>
-                    <span>Birthdate: </span>
-                    <Datepicker options={options} onChange={handleChange} show={show} setShow={handleClose} />
-                    <input className='landing-form' type='text' id='gender'></input>
-                </div>
+            <div className='signup-form flex flex-col justify-center items-center sm:pb-0 pb-8'>
+                <h1 className='sm:pt-0 pt-6'>Let’s get started!</h1>
+                <form className='flex flex-col justify-center items-center w-full'>
+                    <input className='landing-form' type='text' id='username' placeholder='Username' />
+                    <input className='landing-form' type='text' id='password' placeholder='Password' />
+                    <input className='landing-form' type='text' id='confpass' placeholder='Confirm Password' />
+                    <input className='landing-form' type='text' id='email' placeholder='Email' />
+
+
+                    <div className='date-picker-wrapper justify-center items-center flex flex-col w-full'>
+
+                        <div className='datepicker-wrapper'>
+                            <label for='birthday' className='place-self-start' onClick={handleClose}>Birthdate: </label>
+                            <Datepicker id='birthday' options={options} onChange={handleChange} show={show} setShow={handleClose} />
+                        </div>
+                        <div className='genderpicker-wrapper'>
+                            <label for='gender'  className='place-self-start'>Gender: </label>
+                            <select className='landing-form' id='gender'>
+                                <option value='male'>Male</option>
+                                <option value='female'>Female</option>
+                                <option value='none'>Rather not say</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button className='primary-btn'>Sign Up</button>
+                </form>
+                <p>Already have an account? <a href='#' className='primary-link'>Sign In</a></p>
             </div>
+            
         </div>
     );
 }
