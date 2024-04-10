@@ -19,7 +19,7 @@ export default function Navbar() {
                     <button onClick={toggleMenu} className='sm:hidden text-white text-5xl font-bold'>≡</button>
                 </div>
                 <span className='flex flex-row gap-6'><a href='#' className='white-link hidden sm:block'>Contact</a>
-                <a href='#' className='white-link hidden sm:block'>Help</a></span>
+                <a href='#' className='white-link hidden sm:block'>Sign In</a></span>
 
             </div>
         </header>
