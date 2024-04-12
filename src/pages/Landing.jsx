@@ -58,7 +58,7 @@ export default function Landing() {
     }
 
     return (
-        <div className='landing-container flex flex-col sm:flex-row mr-4 ml-4 center-margin'>
+        <div className='landing-container flex flex-col sm:flex-row'>
             <div className='hero-heading'>
                 <h1>
                     Connect, Vibe, and Discover: Your Social Media Journey Starts Here!
@@ -79,11 +79,11 @@ export default function Landing() {
                     <div className='date-picker-wrapper justify-center items-center flex flex-col w-full'>
 
                         <div className='datepicker-wrapper'>
-                            <label for='birthday' className='place-self-start' onClick={handleClose}>Birthdate: </label>
+                            <label htmlFor='birthday' className='place-self-start' onClick={handleClose}>Birthdate: </label>
                             <Datepicker id='birthday' options={options} onChange={handleChange} show={show} setShow={handleClose} />
                         </div>
                         <div className='genderpicker-wrapper'>
-                            <label for='gender'  className='place-self-start'>Gender: </label>
+                            <label htmlFor='gender'  className='place-self-start'>Gender: </label>
                             <select className='landing-form' id='gender'>
                                 <option value='male'>Male</option>
                                 <option value='female'>Female</option>

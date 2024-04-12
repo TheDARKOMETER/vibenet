@@ -13,6 +13,8 @@ const userSchema = new Schema({
     posts: [{type: Schema.Types.ObjectId, ref: 'Post'}],
     likes: [{type: Schema.Types.ObjectId, ref: 'Post'}],
     subscribers: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    accountStatus: {type: String, enum: ['Active', 'Banned', 'Deleted', 'Staff', 'Developer'], default: 'Active'},
+    createdAt: {type: Date, default: Date.now}
 })
 
 const User = mongoose.model('Task', userSchema)

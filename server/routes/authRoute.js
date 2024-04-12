@@ -16,8 +16,8 @@ app.post('/login', (req, res) => {
     const accessToken = generateAccessToken(user)
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
     refreshTokens.push(refreshToken)
-    res.json({ accessToken: accessToken, refreshToken: refreshToken })
-
+    res.cookie('refreshToken', refreshToken, { httpOnly: true })
+    res.json({ accessToken })
 })
 
 app.delete('/logout', (req, res) => {
@@ -43,6 +43,7 @@ app.get('/', (req, res) => {
     res.json({ message: "Get Request" })
 })
 
+// For Debugging HttpOnly cookie, will be used to store cookies in http rather than local storage for improved security.
 app.get('/cookie', (req, res) => {
     res.cookie('myCookie', 'cookieValuezz', { httpOnly: true })
     res.send("Cookie Set!")

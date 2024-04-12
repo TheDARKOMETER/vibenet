@@ -1,7 +1,7 @@
 import './visitorfooter.css'
 export function VisitorFooter() {
     return (
-        <footer className='center-margin pt-4 pb-2'>
+        <footer className='pt-4 pb-2'>
             <nav className='flex flex-col sm:flex-row justify-center items-center text-white'>
                 <ul className='flex flex-col sm:flex-row text-center sm:text-left'>
                     <li><a href='#'>Terms of Service</a></li>

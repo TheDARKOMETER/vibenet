@@ -1,4 +1,6 @@
 div.nav-bar {
+    min-width: 80vw;
     max-width: 1920px;
     box-sizing: border-box;
 }
+
