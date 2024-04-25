@@ -1,12 +1,20 @@
 import './landing.css'
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Datepicker from "tailwind-datepicker-react"
-
+import HttpService from '../services/http-service'
 
 
 export default function Landing() {
     const [show, setShow] = useState(false)
+    const usernameRef = useRef()
+    const emailRef = useRef()
+    const passwordRef = useRef()
+    const confirmPassRef = useRef()
+    const genderRef = useRef()
+    const [errors, setErrors] = useState({})
+    const [birthdate, setBirhdate] = useState()
 
+    const http = new HttpService()
     // Code provided by tailwind-datepicker-react readme
     // TODO: Provide light/dark theme context
 
@@ -24,7 +32,7 @@ export default function Landing() {
             clearBtn: "",
             icons: "",
             text: "",
-            disabledText: "bg-gray-600",
+            disabledText: "bg-red-100",
             input: "",
             inputIcon: "",
             selected: "",
@@ -51,11 +59,63 @@ export default function Landing() {
 
 
     const handleChange = (selectedDate) => {
-        console.log(selectedDate)
+        setBirhdate(selectedDate)
     }
     const handleClose = (state) => {
         setShow(state)
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        let collectedErrors = {}
+
+        if (!usernameRef.current.value) {
+            collectedErrors.username = "Username is required"
+        }
+        if (!passwordRef.current.value || passwordRef.current.value.length < 6) {
+            collectedErrors.password = "Please enter a valid password, with atleast 6 characters"
+        }
+        if ((passwordRef.current.value !== confirmPassRef.current.value) && passwordRef.current.value) {
+            collectedErrors.passwordMatch = "Password does not match"
+        }
+        if (!emailRef.current.value || !/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(emailRef.current.value)) {
+            collectedErrors.email = "Enter a valid email"
+        }
+
+        const currentDate = Date.now()
+        const dateDiff = currentDate - birthdate
+        const dateDiffYear = Math.floor(dateDiff / (3.154 * Math.pow(10, 10)))
+        if (!birthdate || dateDiffYear < 13) {
+            collectedErrors.birthdate = "Enter a valid birthdate or you must be atleast 13 years old"
+        }
+        setErrors(collectedErrors)
+
+        if (Object.keys(collectedErrors).length === 0) {
+            http.addUser(usernameRef.current.value, passwordRef.current.value, emailRef.current.value, birthdate, genderRef.current.value)
+                .then(res => console.log(res)).catch(err => {
+                    console.log(err.message)
+                    collectedErrors.serverError = err.message
+                    console.log(collectedErrors)
+                    setErrors(collectedErrors)
+                })
+        }
+        alert("Submitted")
+    }
+
+    useEffect(() => {
+        // TODO: Add error messages above inputs when there are errors.
+        if (Object.keys(errors).length > 0) {
+            console.log(passwordRef.current.value)
+            console.log(usernameRef.current.value)
+            console.log(emailRef.current.value)
+            console.log(confirmPassRef.current.value)
+            console.log(genderRef.current.value)
+            console.log(birthdate)
+            console.log(Date.now())
+            console.log(errors)
+        }
+
+    }, [errors])
 
     return (
         <div className='landing-container flex flex-col sm:flex-row'>
@@ -69,33 +129,37 @@ export default function Landing() {
             </div>
             <div className='signup-form flex flex-col justify-center items-center sm:pb-0 pb-8'>
                 <h1 className='sm:pt-0 pt-6'>Let’s get started!</h1>
-                <form className='flex flex-col justify-center items-center w-full'>
-                    <input className='landing-form' type='text' id='username' placeholder='Username' />
-                    <input className='landing-form' type='text' id='password' placeholder='Password' />
-                    <input className='landing-form' type='text' id='confpass' placeholder='Confirm Password' />
-                    <input className='landing-form' type='text' id='email' placeholder='Email' />
+                <form className='flex flex-col justify-center items-center w-full' onSubmit={handleSubmit}>
+                    <input className='landing-form' ref={usernameRef} type='text' id='username' placeholder='Username' />
+                    <input className='landing-form' ref={passwordRef} type='password' id='password' placeholder='Password' />
+                    <input className='landing-form' ref={confirmPassRef} type='password' id='confpass' placeholder='Confirm Password' />
+                    <input className='landing-form' ref={emailRef} type='email' id='email' placeholder='Email' />
 
 
                     <div className='date-picker-wrapper justify-center items-center flex flex-col w-full'>
 
                         <div className='datepicker-wrapper'>
                             <label htmlFor='birthday' className='place-self-start' onClick={handleClose}>Birthdate: </label>
+                            {/* I just realized you can use the default input type date instead of this shit */}
                             <Datepicker id='birthday' options={options} onChange={handleChange} show={show} setShow={handleClose} />
                         </div>
                         <div className='genderpicker-wrapper'>
-                            <label htmlFor='gender'  className='place-self-start'>Gender: </label>
-                            <select className='landing-form' id='gender'>
-                                <option value='male'>Male</option>
-                                <option value='female'>Female</option>
-                                <option value='none'>Rather not say</option>
-                            </select>
+                            <label htmlFor='gender' className='place-self-start'>Gender: </label>
+                            <div className='flex items-center justify-center'>
+                                <select defaultValue={'none'} ref={genderRef} className='landing-form' id='gender'>
+                                    <option value='male'>Male</option>
+                                    <option value='female'>Female</option>
+                                    <option value='none'>Rather not say</option>
+                                </select>
+                            </div>
+
                         </div>
                     </div>
-                    <button className='primary-btn'>Sign Up</button>
+                    <button className='mt-10 mb-5 primary-btn' type='submit'>Sign Up</button>
                 </form>
                 <p>Already have an account? <a href='#' className='primary-link'>Sign In</a></p>
             </div>
-            
+
         </div>
     );
 }
