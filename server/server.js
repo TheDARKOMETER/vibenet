@@ -6,32 +6,28 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: '.env.local' })
 const bcrypt = require('bcrypt')
 const cors = require('cors')
-
-app.use(express.json())
-
-// Connect to database
-db.connectToDatabase(process.env.MONGODB_URI)
-
+const userRoute = require('./routes/userRoute')
+const authRoute = require('./routes/authRoute')
 app.use(cors({
     origin: [
         'http://localhost:3000'
     ]
 }))
+app.use('/api/users', userRoute)
+app.use('/api/auth', authRoute)
+app.use(express.json())
+
+// Connect to database
+db.connectToDatabase(process.env.MONGODB_URI)
 
 
-app.get('/', (req, res) => {
+
+
+app.get('/api', (req, res) => {
+    console.log(req.body)
     res.send("Hello World!")
 })
 
-app.post('/users', async (req, res) => {
-    try {
-        await db.addUserToDatabase(req.body)
-        res.sendStatus(200)
-    } catch (err) {
-        console.error("Error: ", err)
-        res.sendStatus(500)
-    }
-})
 
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)

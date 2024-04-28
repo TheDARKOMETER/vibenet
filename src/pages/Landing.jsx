@@ -12,6 +12,7 @@ export default function Landing() {
     const confirmPassRef = useRef()
     const genderRef = useRef()
     const [errors, setErrors] = useState({})
+    const [errorMessage, setErrorMessage] = useState()
     const [birthdate, setBirhdate] = useState()
 
     const http = new HttpService()
@@ -65,13 +66,21 @@ export default function Landing() {
         setShow(state)
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         let collectedErrors = {}
+        let isExistingUser = await http.checkUsernameAvailability(usernameRef.current.value)
+
 
         if (!usernameRef.current.value) {
             collectedErrors.username = "Username is required"
         }
+
+        if(isExistingUser) {
+            collectedErrors.isTaken = "Username already taken"
+        }
+
+
         if (!passwordRef.current.value || passwordRef.current.value.length < 6) {
             collectedErrors.password = "Please enter a valid password, with atleast 6 characters"
         }
@@ -105,17 +114,30 @@ export default function Landing() {
     useEffect(() => {
         // TODO: Add error messages above inputs when there are errors.
         if (Object.keys(errors).length > 0) {
-            console.log(passwordRef.current.value)
-            console.log(usernameRef.current.value)
-            console.log(emailRef.current.value)
-            console.log(confirmPassRef.current.value)
-            console.log(genderRef.current.value)
-            console.log(birthdate)
-            console.log(Date.now())
-            console.log(errors)
+            // console.log(passwordRef.current.value)
+            // console.log(usernameRef.current.value)
+            // console.log(emailRef.current.value)
+            // console.log(confirmPassRef.current.value)
+            // console.log(genderRef.current.value)
+            // console.log(birthdate)
+            // console.log(Date.now())
+            // console.log(errors)
+            setErrorMessage(outputMessages(errors))
         }
 
     }, [errors])
+
+    useEffect(() => {
+        console.log(errorMessage)
+    }, [errorMessage])
+
+    const outputMessages = (errors) => {
+        // Return the first error only
+        for (const key in errors) {
+            console.log(errors[key])
+            return errors[key]
+        }
+    }
 
     return (
         <div className='landing-container flex flex-col sm:flex-row'>
@@ -129,6 +151,9 @@ export default function Landing() {
             </div>
             <div className='signup-form flex flex-col justify-center items-center sm:pb-0 pb-8'>
                 <h1 className='sm:pt-0 pt-6'>Let’s get started!</h1>
+                
+                {errorMessage && <div className='error-message mt-0 mb-2 rounded-md text-white bg-red-400 p-2'>{`${errorMessage}`}</div>}
+
                 <form className='flex flex-col justify-center items-center w-full' onSubmit={handleSubmit}>
                     <input className='landing-form' ref={usernameRef} type='text' id='username' placeholder='Username' />
                     <input className='landing-form' ref={passwordRef} type='password' id='password' placeholder='Password' />

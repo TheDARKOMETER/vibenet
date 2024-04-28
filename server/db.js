@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('./dbmodels/user')
 const auth = require('./auth')
+
 const connectToDatabase = async (DB_URI) => {
     try {
         await mongoose.connect(DB_URI)
@@ -39,12 +40,22 @@ const addUserToDatabase = async (req) => {
 const checkUsernameAvailability = async (username) => {
     try {
         const isUserExists = await User.findOne({ username }) ? true : false
+        console.log(isUserExists, username)
         return isUserExists
     } catch (err) {
         throw err
     }
 }
 
+
+const fetchUser = async (username) => {
+    try {
+        const user = await User.findOne({ username })
+        return user
+    } catch (err) {
+        throw err
+    }
+}
 //connectToDatabase()
 
 // Test CRUD Operation
@@ -68,5 +79,7 @@ const checkUsernameAvailability = async (username) => {
 
 module.exports = {
     connectToDatabase,
-    addUserToDatabase
+    addUserToDatabase,
+    fetchUser,
+    checkUsernameAvailability
 }
