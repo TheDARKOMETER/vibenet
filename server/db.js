@@ -33,15 +33,19 @@ const addUserToDatabase = async (req) => {
         return userObject.save()
     } catch (err) {
         console.error("An error occured when adding a user:", err)
+        console.error(err.keyPattern, "KEY")
         throw err
     }
 }
 
 const checkUsernameAvailability = async (username) => {
     try {
-        const isUserExists = await User.findOne({ username }) ? true : false
-        console.log(isUserExists, username)
-        return isUserExists
+        // Case insenstive regex can be quite slow, so it could be possible to implement lowercase
+        // name attribute on schema for indexing 
+        const user = await fetchUser(username)
+        const userExists = user ? true : false
+        console.log(userExists, user)
+        return userExists
     } catch (err) {
         throw err
     }
@@ -50,7 +54,7 @@ const checkUsernameAvailability = async (username) => {
 
 const fetchUser = async (username) => {
     try {
-        const user = await User.findOne({ username })
+        const user = await User.findOne({ username }).collation({ locale: "en", strength: 2 })
         return user
     } catch (err) {
         throw err

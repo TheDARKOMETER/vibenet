@@ -2,7 +2,8 @@ import './landing.css'
 import { useEffect, useRef, useState } from 'react';
 import Datepicker from "tailwind-datepicker-react"
 import HttpService from '../services/http-service'
-
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Landing() {
     const [show, setShow] = useState(false)
@@ -14,10 +15,36 @@ export default function Landing() {
     const [errors, setErrors] = useState({})
     const [errorMessage, setErrorMessage] = useState()
     const [birthdate, setBirhdate] = useState()
-
+    const { currentUser, setCurrentUser } = useAuth()
     const http = new HttpService()
+    const navigate = useNavigate()
+    // http.getCookie().then((res) => {
+    //     console.log(res)
+    // }).then(() => {
+    //     http.readCookie().then(res => {
+    //         console.log(res)
+    //     }).catch((err) => {
+    //         console.error(err)
+    //     })
+    // }).catch((err) => {
+    //     console.error(err)
+    // })
+    // http.readCookie().then(res => {
+    //     console.log(res)
+    // }).catch((err) => {
+    //     console.error(err)
+    // })
+
+
     // Code provided by tailwind-datepicker-react readme
     // TODO: Provide light/dark theme context
+
+    useEffect(() => {
+        if (currentUser) {
+            navigate('/')
+        }
+        console.log(currentUser)
+    }, [currentUser])
 
     const options = {
         title: "Birthdate",
@@ -69,14 +96,19 @@ export default function Landing() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         let collectedErrors = {}
-        let isExistingUser = await http.checkUsernameAvailability(usernameRef.current.value)
+        let isExistingUser
+        try {
+            isExistingUser = await http.checkUsernameAvailability(usernameRef.current.value)
+        } catch (err) {
+            collectedErrors.serverError = err.message
+        }
 
 
         if (!usernameRef.current.value) {
             collectedErrors.username = "Username is required"
         }
 
-        if(isExistingUser) {
+        if (isExistingUser) {
             collectedErrors.isTaken = "Username already taken"
         }
 
@@ -102,8 +134,9 @@ export default function Landing() {
         if (Object.keys(collectedErrors).length === 0) {
             http.addUser(usernameRef.current.value, passwordRef.current.value, emailRef.current.value, birthdate, genderRef.current.value)
                 .then(res => console.log(res)).catch(err => {
-                    console.log(err.message)
-                    collectedErrors.serverError = err.message
+                    console.log(err.response.data.error)
+                    let newErr = (err.response.data.error) ? err.response.data.error : err.message
+                    collectedErrors.serverError = newErr
                     console.log(collectedErrors)
                     setErrors(collectedErrors)
                 })
@@ -112,16 +145,7 @@ export default function Landing() {
     }
 
     useEffect(() => {
-        // TODO: Add error messages above inputs when there are errors.
         if (Object.keys(errors).length > 0) {
-            // console.log(passwordRef.current.value)
-            // console.log(usernameRef.current.value)
-            // console.log(emailRef.current.value)
-            // console.log(confirmPassRef.current.value)
-            // console.log(genderRef.current.value)
-            // console.log(birthdate)
-            // console.log(Date.now())
-            // console.log(errors)
             setErrorMessage(outputMessages(errors))
         }
 
@@ -151,7 +175,7 @@ export default function Landing() {
             </div>
             <div className='signup-form flex flex-col justify-center items-center sm:pb-0 pb-8'>
                 <h1 className='sm:pt-0 pt-6'>Let’s get started!</h1>
-                
+
                 {errorMessage && <div className='error-message mt-0 mb-2 rounded-md text-white bg-red-400 p-2'>{`${errorMessage}`}</div>}
 
                 <form className='flex flex-col justify-center items-center w-full' onSubmit={handleSubmit}>

@@ -11,6 +11,10 @@ router.post('/add', async (req, res) => {
         res.sendStatus(200)
     } catch (err) {
         console.error("Error: ", err)
+        console.log(err.keyPattern.email, "Key")
+        if (err.keyPattern.email === 1) {
+            return res.status(409).json({ error: 'Email already taken' })
+        }
         res.sendStatus(500)
     }
 })

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 
 const AuthContext = React.createContext()
 
@@ -13,9 +13,12 @@ export function useAuth() {
 export default function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState()
 
-
+    useEffect(() => {
+        console.log(currentUser)
+    }, [currentUser])
     const value = {
-        currentUser
+        currentUser,
+        setCurrentUser
     }
 
 

@@ -8,12 +8,27 @@ class HttpService {
     // TODO: Add Authorization header Bearing the auth token
     constructor() {
         this.api = axios.create({
-            baseURL: API_BASE_URL
+            baseURL: API_BASE_URL,
+            withCredentials: true
         })
     }
 
     getBase = () => {
         return this.api.get().then(res => res)
+            .catch(err => {
+                throw err
+            })
+    }
+
+    getCookie = () => {
+        return this.api.get('/auth/cookie').then(res => res)
+            .catch(err => {
+                throw err
+            })
+    }
+
+    readCookie = () => {
+        return this.api.get('/auth/read-cookie').then(res => res)
             .catch(err => {
                 throw err
             })
@@ -26,9 +41,10 @@ class HttpService {
             email,
             birthdate,
             gender
-        }).then(res => res).catch(err => {
-            throw err
-        })
+        }).then(res => res)
+            .catch(err => {
+                throw err
+            })
     }
 
     checkUsernameAvailability = (username) => {
@@ -40,7 +56,7 @@ class HttpService {
     }
 
     loginUser = (username, password) => {
-        return this.api.get(`/auth/login`, {
+        return this.api.post(`/auth/login`, {
             username,
             password
         })

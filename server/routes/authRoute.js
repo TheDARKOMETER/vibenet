@@ -11,12 +11,7 @@ router.use(cookieParser())
 
 
 
-router.get('/debug', (req, res) => {
-    res.send("Greetings")
-})
-
-
-// Temporary storage of refresh tokens
+// Temporary storage of refresh tokens use redis
 let refreshTokens = []
 
 router.post('/login', async (req, res) => {
@@ -24,19 +19,19 @@ router.post('/login', async (req, res) => {
         const { username, password } = req.body
         const tryLogin = await login(username, password)
 
-        if (tryLogin) {
-            res.status(200).send(tryLogin)
-        } else {
-            res.status(401).send(tryLogin)
+        if (!tryLogin) {
+            return res.status(401).json({ error: "Please enter correct username/password" })
         }
+        const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-        // const user = { username: req.body.username, userId: req.body.userId }
-        // const accessToken = generateAccessToken(user)
-        // const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
-        // refreshTokens.push(refreshToken)
-        // res.cookie('refreshToken', refreshToken, { httpOnly: true })
-        // res.cookie('accessToken', accessToken, { httpOnly: true })
-        // res.status(200)
+        const user = await db.fetchUser(username)
+        const userObj = { username: user.username, userID: user._id }
+        const accessToken = generateAccessToken(userObj)
+        const refreshToken = jwt.sign(userObj, process.env.REFRESH_TOKEN_SECRET)
+        refreshTokens.push(refreshToken)
+        res.cookie('refreshToken', refreshToken, { expires: expirationDate, maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
+        res.cookie('accessToken', accessToken, { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
+        res.status(200).json({ userObj })
     } catch (err) {
         res.sendStatus(500)
         throw err
@@ -69,13 +64,15 @@ router.get('/', (req, res) => {
 
 // For Debugging HttpOnly cookie, will be used to store cookies in http rather than local storage for improved security.
 router.get('/cookie', (req, res) => {
-    res.cookie('myCookie', 'cookieValuezz', { httpOnly: true })
+    const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    res.cookie('myCookie', 'suckaz', { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
     res.send("Cookie Set!")
 })
 
 router.get('/read-cookie', (req, res) => {
     const myCookieValue = req.cookies.myCookie;
-
+    console.log(myCookieValue)
     if (myCookieValue) {
         res.status(200).send('Value of myCookie ' + myCookieValue)
     } else {
@@ -88,9 +85,19 @@ function generateAccessToken(user) {
 }
 
 async function login(username, password) {
-    const targetUser = await db.fetchUser(username)
-    const hashedPassword = targetUser.password
-    return auth.comparePassword(password, hashedPassword)
+    try {
+        const targetUser = await db.fetchUser(username)
+        if (targetUser) {
+            const hashedPassword = targetUser.password
+            return auth.comparePassword(password, hashedPassword)
+        } else {
+            return false
+        }
+
+    } catch (err) {
+        throw err
+    }
+
 }
 
 // router.listen(4001, () => {

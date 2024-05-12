@@ -11,7 +11,7 @@ export default function Navbar() {
     }
 
     return (
-        <header className='w-full'>
+        <header className=''>
             <Menu state={isExpanded} />
             <div className='nav-bar pt-4 pb-4 flex sm:place-content-between items-center justify-center'>
                 <span className='grow sm:hidden'></span>
