@@ -24,7 +24,7 @@ export default function SignIn() {
       let res = await http.loginUser(usernameRef.current.value, passwordRef.current.value)
       setCurrentUser(res.userObj)
       setErrorMessage()
-      navigate('/')
+      navigate('/dashboard')
       console.log(res)
     } catch (err) {
       setErrorMessage(err.message)

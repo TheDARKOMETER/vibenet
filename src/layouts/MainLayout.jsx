@@ -1,15 +1,10 @@
 import React, { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import HttpService from '../services/http-service'
 export default function MainLayout() {
-  const { currentUser } = useAuth()
-  const navigate = useNavigate()
-  http.readCookie().then(res => {
-    console.log(res)
-  }).catch((err) => {
-    console.error(err)
-  })
+  const { currentUser, setCurrentUser } = useAuth()
+  const http = new HttpService()
 
   return (
     <>

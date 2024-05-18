@@ -18,33 +18,15 @@ export default function Landing() {
     const { currentUser, setCurrentUser } = useAuth()
     const http = new HttpService()
     const navigate = useNavigate()
-    // http.getCookie().then((res) => {
-    //     console.log(res)
-    // }).then(() => {
-    //     http.readCookie().then(res => {
-    //         console.log(res)
-    //     }).catch((err) => {
-    //         console.error(err)
-    //     })
-    // }).catch((err) => {
-    //     console.error(err)
-    // })
-    // http.readCookie().then(res => {
-    //     console.log(res)
-    // }).catch((err) => {
-    //     console.error(err)
-    // })
-
-
-    // Code provided by tailwind-datepicker-react readme
-    // TODO: Provide light/dark theme context
 
     useEffect(() => {
         if (currentUser) {
-            navigate('/')
+            navigate('/dashboard')
         }
-        console.log(currentUser)
     }, [currentUser])
+    
+    // Code provided by tailwind-datepicker-react readme
+    // TODO: Provide light/dark theme context
 
     const options = {
         title: "Birthdate",

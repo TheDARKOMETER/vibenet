@@ -44,44 +44,37 @@ router.delete('/logout', (req, res) => {
     res.sendStatus(204)
 })
 
-router.post('/token', (req, res) => {
-    const refreshToken = req.body.refreshToken
-    if (refreshToken === null) {
-        return res.sendStatus(401)
+
+router.post('/validate', (req, res) => {
+    try {
+        const accessToken = req.cookies.accessToken
+        const userObj = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
+        console.log(userObj)
+        res.status(200).json({ userObj })
+    } catch (err) {
+        console.log(err)
+        if (err.name === 'TokenExpiredError') {
+            console.log("Trying to refresh")
+            const userObj = jwt.verify(req.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET)
+            const accessToken = generateAccessToken(userObj)
+            const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+            res.cookie('accessToken', accessToken, { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
+            return res.status(200).json({ userObj })
+        }
+        console.log(err)
+        res.sendStatus(401)
     }
-    if (!refreshTokens.includes(refreshToken)) return res.sendStatus(401)
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        const accessToken = generateAccessToken({ name: user.name })
-        res.json({ accessToken: accessToken })
-    })
 })
+
 
 router.get('/', (req, res) => {
     console.log(refreshTokens)
     res.json({ message: "Get Request" })
 })
 
-// For Debugging HttpOnly cookie, will be used to store cookies in http rather than local storage for improved security.
-router.get('/cookie', (req, res) => {
-    const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-
-    res.cookie('myCookie', 'suckaz', { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
-    res.send("Cookie Set!")
-})
-
-router.get('/read-cookie', (req, res) => {
-    const myCookieValue = req.cookies.myCookie;
-    console.log(myCookieValue)
-    if (myCookieValue) {
-        res.status(200).send('Value of myCookie ' + myCookieValue)
-    } else {
-        res.status(404).send('Cookie value not found')
-    }
-})
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '9s' })
 }
 
 async function login(username, password) {

@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+body {
+  font-family: Maven Pro;
+  background: linear-gradient(#6750E0 0%, rgba(178, 80, 224));
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100svw;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button.primary-btn {
+  background-color: #6750E0;
+  padding: 0.7rem;
+  color: white;
+  border-radius: 6px;
+}
+
+a.primary-link {
+  color:#6750E0;
+}
+
+.brand-logo {
+  color: white;
+  font-weight: 600;
+  font-size: 36px;
+}
+
+@media (min-width: 768px) {
+  div.center-margin {
+    margin-left: 12rem;
+    margin-right: 12rem;
+  }
+
+  div.menu {
+    display: none;
+  }
+}
+
+
+a.white-link {
+  font-family: "Montserrat", sans-serif;
+  color: white;
+}
+
+.hamburger {
+  align-self: flex-end;
+}

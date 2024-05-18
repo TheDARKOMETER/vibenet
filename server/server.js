@@ -10,6 +10,8 @@ const cors = require('cors')
 const userRoute = require('./routes/userRoute')
 const authRoute = require('./routes/authRoute')
 
+
+
 app.use(cors({
     origin: [
         'http://localhost:3000'

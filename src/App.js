@@ -14,7 +14,7 @@ function App() {
             <Route index element={<Landing />} />
             <Route path="signin" element={<SignIn />} />
           </Route>
-          <Route exact path="/" element={<MainLayout />}>
+          <Route exact path="/dashboard" element={<MainLayout />}>
             <Route index element={<Dashboard />} />
           </Route>
         </Routes>

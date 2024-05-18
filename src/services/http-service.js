@@ -20,15 +20,22 @@ class HttpService {
             })
     }
 
-    getCookie = () => {
-        return this.api.get('/auth/cookie').then(res => res)
-            .catch(err => {
-                throw err
-            })
-    }
+    // getCookie = () => {
+    //     return this.api.get('/auth/cookie').then(res => res)
+    //         .catch(err => {
+    //             throw err
+    //         })
+    // }
 
-    readCookie = () => {
-        return this.api.get('/auth/read-cookie').then(res => res)
+    // readCookie = () => {
+    //     return this.api.get('/auth/read-cookie').then(res => res)
+    //         .catch(err => {
+    //             throw err
+    //         })
+    // }
+
+    validateToken = () => {
+        return this.api.post('/auth/validate').then(res => res.data)
             .catch(err => {
                 throw err
             })
