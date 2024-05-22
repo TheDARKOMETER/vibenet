@@ -55,8 +55,11 @@ router.post('/validate', (req, res) => {
         console.log(err)
         if (err.name === 'TokenExpiredError') {
             console.log("Trying to refresh")
-            const userObj = jwt.verify(req.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET)
+            const decode = jwt.verify(req.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET)
+            const userObj = {username: decode.username, userID: decode.userID}
             const accessToken = generateAccessToken(userObj)
+            console.log(userObj)
+            console.log(accessToken)
             const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
             res.cookie('accessToken', accessToken, { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
             return res.status(200).json({ userObj })
@@ -74,7 +77,7 @@ router.get('/', (req, res) => {
 
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '9s' })
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' })
 }
 
 async function login(username, password) {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar, VisitorFooter } from '../components/index'
-import './visitorlayout.css'
+import './visitorlayout.module.css'
 
 export default function VisitorLayout() {
     return (

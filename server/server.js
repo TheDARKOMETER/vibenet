@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const userRoute = require('./routes/userRoute')
 const authRoute = require('./routes/authRoute')
-
+const session = require('express-session')
 
 
 app.use(cors({
