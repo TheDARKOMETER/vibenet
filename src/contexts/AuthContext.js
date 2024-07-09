@@ -13,11 +13,26 @@ export function useAuth() {
 
 export default function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState()
+    const [accessToken, setAccessToken] = useState()
+    const [httpService, setHttpService] = useState(new HttpService())
+
     const navigate = useNavigate()
-    const http = new HttpService()
+    const loginUser = async (username, password) => {
+        let res = await httpService.loginUser(username, password)
+        console.log(res)
+        setAccessToken(res.accessToken)
+        setCurrentUser(res.userObj)
+    }
+
+    const logoutUser = async () => {
+        await httpService.logoutUser()
+        setAccessToken(null)
+        setCurrentUser(null)
+    }
 
     useEffect(() => {
-        http.validateToken().then(res => {
+        httpService.validateToken().then(res => {
+            setAccessToken(res.accessToken)
             setCurrentUser(res.userObj)
         }).catch(() => {
             navigate('/landing')
@@ -25,14 +40,22 @@ export default function AuthProvider({ children }) {
     }, [])
 
     useEffect(() => {
-       if (currentUser) {
-        console.log(currentUser)
-       }
-    }, [currentUser])
+        if (currentUser) {
+            console.log(currentUser)
+        }
+        if (accessToken) {
+            console.log(accessToken)
+            setHttpService(new HttpService(accessToken))
+        }
+
+    }, [currentUser, accessToken])
 
     const value = {
         currentUser,
-        setCurrentUser
+        loginUser,
+        logoutUser,
+        accessToken,
+        httpService
     }
 
 

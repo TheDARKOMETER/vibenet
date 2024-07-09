@@ -1,0 +1,8 @@
+div.create-post-component textarea {
+    resize: none;
+}
+
+div.create-post-component {
+    background-color: rgba(0,0,0, 0.4);
+    z-index: 1000;
+}

@@ -1,4 +1,8 @@
-@media (max-width: 767px) {
+div.menu {
+    display: none;
+  }
+
+@media (max-width: 1024px) {
     div.menu {
         display: block;
         width: 65vw;

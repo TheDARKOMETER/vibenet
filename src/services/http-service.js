@@ -1,41 +1,55 @@
 import axios from "axios"
-
-const API_BASE_URL = 'http://127.0.0.1:3005/api'
+const API_BASE_URL = 'http://127.0.0.1:3005/api/'
 
 class HttpService {
 
-    //constructor(authToken) 
-    // TODO: Add Authorization header Bearing the auth token
-    constructor() {
+    constructor(authToken) {
         this.api = axios.create({
             baseURL: API_BASE_URL,
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+                'Authorization': authToken ? `Bearer ${authToken}` : undefined,
+            }
         })
     }
 
     getBase = () => {
         return this.api.get().then(res => res)
             .catch(err => {
-                throw err
+                console.error(err)
             })
     }
 
-    // getCookie = () => {
-    //     return this.api.get('/auth/cookie').then(res => res)
-    //         .catch(err => {
-    //             throw err
-    //         })
-    // }
 
-    // readCookie = () => {
-    //     return this.api.get('/auth/read-cookie').then(res => res)
-    //         .catch(err => {
-    //             throw err
-    //         })
-    // }
+    addPost = (post) => {
+        return this.api.post('/posts/add', { post }).then(res => res.data).catch(err => {
+            console.error(err)
+        })
+    }
+
+    getPosts = () => {
+        return this.api.get('/posts/get').then(res => res.data).catch(err => {
+            console.error(err)
+        })
+    }
+
+    addComment = (comment) => {
+        return this.api.post('/comments/add', { comment }).then(res => res.data).catch(err => {
+            console.error(err)
+        })
+    }
+
+    getComments = () => {
+        return this.api.get('/comments/get').then(res => res.data).catch(err => {
+            console.error(err)
+        })
+    }
 
     validateToken = () => {
-        return this.api.post('/auth/validate').then(res => res.data)
+        console.log(this.authToken)
+        return this.api.post('/auth/validate').then(res => {
+            return res.data
+        })
             .catch(err => {
                 throw err
             })
@@ -69,8 +83,24 @@ class HttpService {
         })
             .then(res => res.data)
             .catch(err => {
-                throw err
+                console.log(err)
+                if (err.code === "ERR_NETWORK") {
+                    throw err.message
+                } else {
+                    throw err.response.data.error
+                }
             })
+    }
+
+
+    logoutUser = () => {
+        return this.api.delete('/auth/logout').then(res => res.data).catch(err => {
+            if (err.code === "ERR_NETWORK") {
+                throw err.message
+            } else {
+                throw err.response.data.error
+            }
+        })
     }
 }
 

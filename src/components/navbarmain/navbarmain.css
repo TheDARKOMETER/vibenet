@@ -1,0 +1,9 @@
+.brand-logo {
+    color: #9747FF;
+    font-weight: 600;
+    font-size: 36px;
+}
+
+header.main-navbar {
+    border-bottom: black 1px solid;
+}

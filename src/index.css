@@ -1,0 +1,23 @@
+button.primary-btn {
+  background-color: #9747FF;
+  border-radius: 9999px;
+  padding: 0.7rem;
+  color: white;
+}
+
+a.primary-link {
+  color: #6750E0;
+}
+
+
+.primary-color {
+  color: #9747FF;
+}
+
+button.secondary-btn {
+  background-color: white;
+  padding: 0.4rem 1.5rem 0.4rem 1.5rem;
+  color: #6750E0;
+  border-radius: 9999px;
+  border: solid #6750E0 1px;
+}

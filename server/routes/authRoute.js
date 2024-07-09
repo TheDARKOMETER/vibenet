@@ -11,6 +11,9 @@ router.use(cookieParser())
 
 
 
+
+
+
 // Temporary storage of refresh tokens use redis
 let refreshTokens = []
 
@@ -30,39 +33,42 @@ router.post('/login', async (req, res) => {
         const refreshToken = jwt.sign(userObj, process.env.REFRESH_TOKEN_SECRET)
         refreshTokens.push(refreshToken)
         res.cookie('refreshToken', refreshToken, { expires: expirationDate, maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
-        res.cookie('accessToken', accessToken, { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
-        res.status(200).json({ userObj })
+        res.status(200).json({ userObj, accessToken: accessToken })
     } catch (err) {
-        res.sendStatus(500)
-        throw err
+        res.status(500).json({ error: "Internal server error" })
     }
 
 })
 
 router.delete('/logout', (req, res) => {
     refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+    res.clearCookie('refreshToken')
     res.sendStatus(204)
 })
 
 
 router.post('/validate', (req, res) => {
+    let accessToken
     try {
-        const accessToken = req.cookies.accessToken
+        accessToken = req.headers['authorization']
+        console.log(accessToken, "check req header")
         const userObj = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
-        console.log(userObj)
-        res.status(200).json({ userObj })
+        console.log(refreshTokens)
+        res.status(200).json({ username: userObj.username, userID: userObj.userID })
     } catch (err) {
         console.log(err)
-        if (err.name === 'TokenExpiredError') {
+        if (err.name === 'TokenExpiredError' || (err.name === 'JsonWebTokenError' && accessToken === undefined)) {
             console.log("Trying to refresh")
+            const refreshToken = req.cookies.refreshToken
+            if (!refreshToken || !refreshTokens.includes(refreshToken)) {
+                return res.sendStatus(403)
+            }
             const decode = jwt.verify(req.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET)
-            const userObj = {username: decode.username, userID: decode.userID}
+            const userObj = { username: decode.username, userID: decode.userID }
             const accessToken = generateAccessToken(userObj)
-            console.log(userObj)
             console.log(accessToken)
-            const expirationDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-            res.cookie('accessToken', accessToken, { maxAge: expirationDate, httpOnly: true, secure: true, sameSite: 'none' })
-            return res.status(200).json({ userObj })
+            console.log(userObj)
+            return res.status(200).json({ accessToken, userObj })
         }
         console.log(err)
         res.sendStatus(401)

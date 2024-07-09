@@ -14,30 +14,28 @@ export default function SignIn() {
   const passwordRef = useRef();
   const [errorMessage, setErrorMessage] = useState()
   const [loading, setLoading] = useState(false)
-  const { user, setCurrentUser } = useAuth()
+  const { loginUser } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       setLoading(true)
-      let res = await http.loginUser(usernameRef.current.value, passwordRef.current.value)
-      setCurrentUser(res.userObj)
+      await loginUser(usernameRef.current.value, passwordRef.current.value)
       setErrorMessage()
       navigate('/dashboard')
-      console.log(res)
     } catch (err) {
-      setErrorMessage(err.message)
+      setErrorMessage(err)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className='flex sign-in items-center justify-center'>
-      <div className='signup-form flex flex-col justify-center items-center pb-8 pt-8'>
+    <div className='flex sign-in items-center justify-center w-full h-svh'>
+      <div className='signin-form flex flex-col justify-center items-center pb-8 pt-8 '>
         <Link to='/' className='justify-self-start	self-start ml-4'><ArrowBackIosIcon />Back</Link>
-        <h1 className='sm:pt-0 pt-6'>Sign In</h1>
+        <h1 className='sm:pt-2 pt-6 primary-color'>Sign In</h1>
         {loading && <CircularProgress />}
         {errorMessage && <div className='error-message mt-0 mb-2 rounded-md text-white bg-red-400 p-2'>{`${errorMessage}`}</div>}
         <form className='flex flex-col justify-center items-center w-full' onSubmit={handleSubmit}>
