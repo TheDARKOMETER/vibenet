@@ -8,9 +8,16 @@ const bcrypt = require('bcrypt')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const userRoute = require('./routes/userRoute')
-const authRoute = require('./routes/authRoute')
+const authModule = require('./routes/authModule')
+const authRoute = authModule.router
+const authMiddleWare = authModule.isLoggedIn
 const session = require('express-session')
 
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+}))
 
 app.use(cors({
     origin: [
@@ -25,6 +32,7 @@ app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
 app.use(express.json())
 app.use(cookieParser())
+
 
 // Connect to database
 db.connectToDatabase(process.env.MONGODB_URI)

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import './createpost.css'
 
-export function CreatePost({ isOpen, onClose }) {
+export function CreatePost({ isOpen, onClose, onPost }) {
     const createPostRef = useRef(null)
     const postContentRef = useRef()
     const { currentUser, httpService } = useAuth()
@@ -33,7 +33,8 @@ export function CreatePost({ isOpen, onClose }) {
             comments: []
         }
 
-        httpService.addPost(postObj)
+        await httpService.addPost(postObj)
+        onPost()
         onClose()
     }
 

@@ -10,7 +10,13 @@ router.use(express.json())
 router.use(cookieParser())
 
 
-
+const isLoggedIn = (req, res, next) => {
+    if (req.session.userToken) {
+        next()
+    } else {
+        res.redirect('/landing')
+    }
+}
 
 
 
@@ -107,4 +113,7 @@ async function login(username, password) {
 //     console.log("JWT Test server running")
 // })
 
-module.exports = router
+module.exports = {
+    router,
+    isLoggedIn
+}

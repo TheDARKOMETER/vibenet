@@ -6,7 +6,7 @@ import './visitorlayout.css'
 export default function VisitorLayout() {
 
     useEffect(() => {
-        const body = document.getElementById('root')
+        const body = document.getElementById('body')
         body.classList.add('gradient-bg')
 
         return () => {
@@ -15,7 +15,7 @@ export default function VisitorLayout() {
     }, [])
 
     return (
-        <div className='ml-4 mr-4 sm:ml-48 sm:mr-48 center-margin w-full'>
+        <div className='ml-4 mr-4 sm:ml-48 sm:mr-48 flex flex-col'>
             <Navbar />
             <Outlet />
             <VisitorFooter />

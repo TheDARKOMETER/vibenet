@@ -146,7 +146,7 @@ export default function Landing() {
     }
 
     return (
-        <div className='landing-container flex flex-col sm:flex-row h-screen'>
+        <div className='landing-container flex flex-col sm:flex-row '>
             <div className='hero-heading'>
                 <h1>
                     Connect, Vibe, and Discover: Your Social Media Journey Starts Here!

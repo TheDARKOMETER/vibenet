@@ -9,16 +9,14 @@ export default function Dashboard() {
   const [isCreatingPost, setIsCreatingPost] = useState(false)
   const [posts, setPosts] = useState([])
 
-  useEffect(() => {
-    console.log(currentUser)
-
-    const fetchPosts = async () => {
-      if (currentUser) {
-        const data = await httpService.getPosts()
-        setPosts(data)
-      }
+  const fetchPosts = async () => {
+    if (currentUser) {
+      const data = await httpService.getPosts()
+      setPosts(data)
     }
+  }
 
+  useEffect(() => {
     fetchPosts()
   }, [currentUser])
 
@@ -60,7 +58,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <CreatePost isOpen={isCreatingPost} onClose={cancelCreatePost} httpService={httpService} />
+      <CreatePost isOpen={isCreatingPost} onClose={cancelCreatePost} httpService={httpService} onPost={fetchPosts} />
       <div className='flex'>
 
         <div className='first-column h-screen overflow-auto flex-col border border-black overflow-y-auto flex'>
