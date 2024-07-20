@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const User = require('./dbmodels/user')
 const Post = require('./dbmodels/post')
+const Image = require('./dbmodels/image')
 const Comment = require('./dbmodels/comment')
 const auth = require('./auth')
 
@@ -75,7 +76,6 @@ const addCommentToPost = async (req) => {
         const post = await Post.findByIdAndUpdate(comment.parentPost,
             { $push: { comments: comment._id } },
             { new: "true" }).populate(populatePostSchema)
-        console.log(post)
         return post
     } catch (err) {
         console.error(err)
@@ -86,7 +86,6 @@ const addCommentToPost = async (req) => {
 const getPosts = async () => {
     try {
         const posts = await Post.find().populate(populatePostSchema)
-        console.log(posts, "posts")
         return posts
     } catch (err) {
         console.error(err)
@@ -108,13 +107,33 @@ const checkUsernameAvailability = async (username) => {
 }
 
 
-const fetchUser = async (username) => {
+const fetchUser = async (username, notAuthenticate = true) => {
     try {
-        const user = await User.findOne({ username }).collation({ locale: "en", strength: 2 })
+        let userQuery = User.findOne({ username }).collation({ locale: "en", strength: 2 })
+        if (notAuthenticate) {
+            userQuery = userQuery.select('-password')
+        }
+        const user = await userQuery.exec()
         return user
     } catch (err) {
         throw err
     }
+}
+
+const uploadImage = async (data, name, contentType) => {
+    try {
+        const newImage = new Image({
+            data,
+            name,
+            contentType
+        })
+
+        return await newImage.save()
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+
 }
 //connectToDatabase()
 
@@ -144,6 +163,7 @@ module.exports = {
     getComments,
     addComment: addCommentToPost,
     getPosts,
+    uploadImage,
     checkUsernameAvailability,
     addPostToDatabase
 }

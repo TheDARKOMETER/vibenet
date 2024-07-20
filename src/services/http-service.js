@@ -3,13 +3,10 @@ const API_BASE_URL = 'http://127.0.0.1:3005/api/'
 
 class HttpService {
 
-    constructor(authToken) {
+    constructor() {
         this.api = axios.create({
             baseURL: API_BASE_URL,
             withCredentials: true,
-            headers: {
-                'Authorization': authToken ? `Bearer ${authToken}` : undefined,
-            }
         })
     }
 
@@ -47,7 +44,8 @@ class HttpService {
 
     validateToken = () => {
         console.log(this.authToken)
-        return this.api.post('/auth/validate').then(res => {
+        return this.api.get('/auth/validate', { withCredentials: true }).then(res => {
+            console.log(res.data)
             return res.data
         })
             .catch(err => {
@@ -92,6 +90,31 @@ class HttpService {
             })
     }
 
+    updateProfile = (newProfile) => {
+        return this.api.post('/users/update', { newProfile },
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        )
+            .then(res => res.data)
+            .catch(err => {
+                throw err
+            })
+    }
+
+    uploadImage = (image) => {
+        return this.api.post('/images/add', image, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then(res => res.data)
+            .catch(err => {
+                throw err
+            })
+    }
 
     logoutUser = () => {
         return this.api.delete('/auth/logout').then(res => res.data).catch(err => {

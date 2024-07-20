@@ -3,6 +3,9 @@ const db = require('./db')
 const app = express()
 const PORT = 3005
 const jwt = require('jsonwebtoken')
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' });
+
 require('dotenv').config({ path: '.env.local' })
 const bcrypt = require('bcrypt')
 const cookieParser = require('cookie-parser')
@@ -13,8 +16,9 @@ const authRoute = authModule.router
 const authMiddleWare = authModule.isLoggedIn
 const session = require('express-session')
 
+
 app.use(session({
-    secret: 'keyboard cat',
+    secret: process.env.ACCESS_TOKEN_SECRET,
     resave: false,
     saveUninitialized: true
 }))
@@ -22,11 +26,12 @@ app.use(session({
 app.use(cors({
     origin: [
         'http://localhost:3000',
-        'http://127.0.0.1:3000'
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3005'
     ],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'] // Add Authorization header here
-}))
+    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'] // Include 'Authorization' header
+}));
 
 app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
@@ -40,7 +45,6 @@ db.connectToDatabase(process.env.MONGODB_URI)
 
 app.get('/api', (req, res) => {
     accessToken = req.headers['authorization'] && req.headers['authorization'].split(" ")[1]
-    console.log(accessToken)
     res.status(200).send("Hello World!")
 })
 
@@ -48,14 +52,13 @@ app.get('/api', (req, res) => {
 app.post('/api/posts/add', async (req, res) => {
     try {
         const post = await db.addPostToDatabase(req.body.post)
-        console.log(post)
         res.status(200).json(post)
     } catch (err) {
         res.status.send(500)
     }
 })
 
-app.get('/api/posts/get', async (req, res) => {
+app.get('/api/posts/get', authMiddleWare, async (req, res) => {
     try {
         const data = await db.getPosts()
         res.status(200).send(data)
@@ -64,6 +67,20 @@ app.get('/api/posts/get', async (req, res) => {
     }
 })
 
+app.post('/api/images/add', upload.none(), async (req, res) => {
+    try {
+        console.log(req.body.data); // File info
+        console.log(req.body.name); // Other form fields
+        console.log(req.body.contentType); // Other form fields
+
+        const uploadImage = await db.uploadImage(req.body.data, req.body.name, req.body.contentType)
+        res.status(200).json(uploadImage)
+    }
+    catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
 
 app.post('/api/comments/add', async (req, res) => {
     try {
@@ -74,7 +91,7 @@ app.post('/api/comments/add', async (req, res) => {
     }
 })
 
-app.post('/api/comments/get', async (req, res) => {
+app.post('/api/comments/get', authMiddleWare, async (req, res) => {
     try {
         const data = await db.getComments()
         res.status(200).json(data)
@@ -87,8 +104,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`)
 })
 
-function authenticateToken(req, res, next) {
-    const accessToken = req.headers['authorization'].startsWith("Bearer ") && req.headers['authorization'].split(" ")[1]
-    console.log(accessToken)
-}
 
