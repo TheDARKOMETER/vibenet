@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { Navbar, VisitorFooter } from '../components/index'
 import './visitorlayout.css'
-
+import { useAuth } from '../contexts/AuthContext'
 export default function VisitorLayout() {
+    const { currentUser } = useAuth()
+    const navigate = useNavigate()
 
     useEffect(() => {
         const body = document.getElementById('body')
         body.classList.add('gradient-bg')
-
+        if (currentUser) navigate('/dashboard')
         return () => {
             body.classList.remove('gradient-bg')
         }

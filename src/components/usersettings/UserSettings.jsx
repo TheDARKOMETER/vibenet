@@ -8,6 +8,7 @@ export function UserSettings() {
   const [imageData, setImageData] = useState()
   const [imageName, setImageName] = useState('')
   const [imageType, setImageType] = useState('')
+  const [imageBase64, setImageBase64] = useState('')
   const [displayName, setDisplayName] = useState()
   const { currentUser, httpService } = useAuth()
 
@@ -19,17 +20,35 @@ export function UserSettings() {
     await httpService.updateProfile(formData)
   }
 
+  // useEffect(() => {
+  //   const fetchImage = async () => {
+  //     const image = await httpService.getImage('669d169536596ff7433a2316')
+  //     setImageBase64(image.data)
+  //     console.log(image.data)
+  //   }
+  //   fetchImage()
+  // }, [])
+
+  function _arrayBufferToBase64(buffer) {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
   useEffect(() => {
-    console.log(imageData, imageName, imageType)
-  }, [imageData, imageName, imageType])
+    imageData && console.log(typeof imageData)
+  }, [imageData, imageName, imageType, imageBase64])
 
   const uploadImage = async (e) => {
     e.preventDefault()
     const formData = new FormData()
     formData.append('data', imageData)
-    formData.append('name', imageName)
-    formData.append('contentType', imageType)
-
+    formData.append('type', "Profile")
+    formData.append("owner", currentUser.userID)
     await httpService.uploadImage(formData)
   }
 
@@ -43,6 +62,7 @@ export function UserSettings() {
         <label htmlFor='profile _picture' className='text-sm font-semibold'>Choose a Profile Picture</label>
         <div className='image-container flex justify-center'>
           <img src={thumbnail} className='w-32 h-32 rounded-full' />
+          {/* <img src={`${imageBase64}`} className='w-32 h-32 rounded-full' /> */}
         </div>
         <input accept="image/*" type="file" onChange={(e) => {
           const reader = new FileReader()
@@ -55,7 +75,7 @@ export function UserSettings() {
             setImageData(imageData)
           }
 
-          reader.readAsArrayBuffer(file)
+          reader.readAsDataURL(file)
           setThumbnail(URL.createObjectURL(e.target.files[0]))
         }} className="block w-full text-sm text-slate-500
               file:mr-4 file:py-2 file:px-4

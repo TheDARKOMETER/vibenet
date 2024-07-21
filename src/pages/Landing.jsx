@@ -24,7 +24,7 @@ export default function Landing() {
             navigate('/dashboard')
         }
     }, [currentUser])
-    
+
     // Code provided by tailwind-datepicker-react readme
     // TODO: Provide light/dark theme context
 
@@ -123,7 +123,7 @@ export default function Landing() {
                     setErrors(collectedErrors)
                 })
         }
-        alert("Submitted")
+        navigate('/dashboard', { replace: true })
     }
 
     useEffect(() => {

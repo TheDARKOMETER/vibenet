@@ -17,13 +17,14 @@ export default function SignIn() {
   const { loginUser } = useAuth()
   const navigate = useNavigate()
 
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       setLoading(true)
       await loginUser(usernameRef.current.value, passwordRef.current.value)
       setErrorMessage()
-      navigate('/dashboard')
+      navigate('/dashboard', { replace: true })
     } catch (err) {
       setErrorMessage(err)
     } finally {

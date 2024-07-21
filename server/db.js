@@ -120,12 +120,12 @@ const fetchUser = async (username, notAuthenticate = true) => {
     }
 }
 
-const uploadImage = async (data, name, contentType) => {
+const uploadImage = async (data, owner, type) => {
     try {
         const newImage = new Image({
             data,
-            name,
-            contentType
+            owner,
+            type
         })
 
         return await newImage.save()
@@ -133,7 +133,17 @@ const uploadImage = async (data, name, contentType) => {
         console.error(err)
         throw err
     }
+}
 
+const getImage = async (imageId) => {
+    try {
+        const image = await Image.findById(imageId)
+        console.log(imageId)
+        return image
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
 }
 //connectToDatabase()
 
@@ -163,6 +173,7 @@ module.exports = {
     getComments,
     addComment: addCommentToPost,
     getPosts,
+    getImage,
     uploadImage,
     checkUsernameAvailability,
     addPostToDatabase

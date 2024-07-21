@@ -17,6 +17,9 @@ const authMiddleWare = authModule.isLoggedIn
 const session = require('express-session')
 
 
+app.use(express.json())
+app.use(express.text())
+
 app.use(session({
     secret: process.env.ACCESS_TOKEN_SECRET,
     resave: false,
@@ -69,14 +72,21 @@ app.get('/api/posts/get', authMiddleWare, async (req, res) => {
 
 app.post('/api/images/add', upload.none(), async (req, res) => {
     try {
-        console.log(req.body.data); // File info
-        console.log(req.body.name); // Other form fields
-        console.log(req.body.contentType); // Other form fields
-
-        const uploadImage = await db.uploadImage(req.body.data, req.body.name, req.body.contentType)
+        const uploadImage = await db.uploadImage(req.body.data, req.body.owner, req.body.type)
         res.status(200).json(uploadImage)
     }
     catch (err) {
+        console.error(err)
+        res.sendStatus(500)
+    }
+})
+
+app.get('/api/images/get/:imageId', async (req, res) => {
+    try {
+        const data = await db.getImage(req.params.imageId)
+        console.log(req.params.imageId)
+        res.status(200).json(data)
+    } catch (err) {
         console.error(err)
         res.sendStatus(500)
     }

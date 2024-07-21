@@ -86,7 +86,7 @@ export default function Dashboard() {
               </span>
             </div>
             <div className='user-profile-action flex justify-center'>
-              <button className='secondary-btn' onClick={() => httpService.getBase()}>Test Button</button>
+              <button className='secondary-btn' onClick={() => httpService.getBase()}>Profile</button>
             </div>
           </div>
 

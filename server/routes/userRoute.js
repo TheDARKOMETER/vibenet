@@ -6,7 +6,7 @@ router.use(express.json())
 
 router.post('/add', async (req, res) => {
     try {
-        await db.addUserToDatabase(req.body)
+        const userObject = await db.addUserToDatabase(req.body)
         console.log("Successfully saved user:", userObject)
         res.sendStatus(200)
     } catch (err) {

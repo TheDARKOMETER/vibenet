@@ -116,6 +116,14 @@ class HttpService {
             })
     }
 
+    getImage = (imageId) => {
+        return this.api.get(`/images/get/${imageId}`)
+            .then(res => res.data)
+            .catch(err => {
+                throw err
+            })
+    }
+
     logoutUser = () => {
         return this.api.delete('/auth/logout').then(res => res.data).catch(err => {
             if (err.code === "ERR_NETWORK") {
